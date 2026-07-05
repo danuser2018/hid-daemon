@@ -1,0 +1,18 @@
+[Unit]
+Description=HID key events listener daemon for Nova-2
+Documentation=https://github.com/danuser2018/hid-daemon
+After=default.target
+
+[Service]
+Type=simple
+EnvironmentFile=%h/workspace/home-assistant/config/hid-daemon.env
+ExecStart=%h/workspace/hid-daemon/venv/bin/python src/hid_daemon.py
+WorkingDirectory=%h/workspace/hid-daemon
+Restart=on-failure
+RestartSec=3s
+Environment=PYTHONPATH=%h/workspace/hid-daemon
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target
