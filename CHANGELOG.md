@@ -19,6 +19,14 @@ Los cambios se agrupan en las siguientes categorías:
 
 ---
 
+## [1.1.0] - 2026-07-13
+
+### Corregido
+
+- Resolución de nombres de teclas/botones para mandos, ratones y joysticks (como `BTN_THUMB2`) en el daemon principal, añadiendo soporte para buscar códigos de evento tanto en `evdev.ecodes.BTN` como en la clasificación general de tipo `EV_KEY` de `evdev.ecodes.bytype`.
+
+---
+
 ## [1.0.0] - 2026-07-05 
 
 ### Añadido

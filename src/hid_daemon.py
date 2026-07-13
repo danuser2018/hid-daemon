@@ -29,11 +29,29 @@ def resolve_key_names(event_code: int) -> List[str]:
     E.g. 67 -> ["KEY_F9"]
     """
     try:
+        # Check KEY first (supports existing tests mocking evdev.ecodes.KEY)
         val = evdev.ecodes.KEY.get(event_code)
-        if isinstance(val, list):
-            return [name.upper() for name in val]
-        elif isinstance(val, str):
-            return [val.upper()]
+        if val is not None:
+            if isinstance(val, (list, tuple)):
+                return [name.upper() for name in val]
+            elif isinstance(val, str):
+                return [val.upper()]
+
+        # Check BTN mapping
+        val = evdev.ecodes.BTN.get(event_code)
+        if val is not None:
+            if isinstance(val, (list, tuple)):
+                return [name.upper() for name in val]
+            elif isinstance(val, str):
+                return [val.upper()]
+
+        # Fallback to general EV_KEY bytype lookup
+        val = evdev.ecodes.bytype.get(evdev.ecodes.EV_KEY, {}).get(event_code)
+        if val is not None:
+            if isinstance(val, (list, tuple)):
+                return [name.upper() for name in val]
+            elif isinstance(val, str):
+                return [val.upper()]
     except Exception:
         pass
     return []
