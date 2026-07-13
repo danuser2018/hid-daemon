@@ -12,12 +12,26 @@ from src.hid_daemon import HidDaemon, resolve_key_names, main
 
 def test_resolve_key_names():
     """Verifies key name resolution for single, multiple and invalid codes."""
-    with patch("evdev.ecodes.KEY") as mock_key_map:
-        # Single string return
+    with patch("evdev.ecodes.KEY") as mock_key_map, \
+         patch("evdev.ecodes.BTN") as mock_btn_map, \
+         patch("evdev.ecodes.bytype") as mock_bytype_map:
+        
+        # Single string return from KEY
         mock_key_map.get.return_value = "KEY_F9"
         assert resolve_key_names(67) == ["KEY_F9"]
 
-        # List return
+        # Fallback to BTN if KEY returns None
+        mock_key_map.get.return_value = None
+        mock_btn_map.get.return_value = "BTN_THUMB2"
+        assert resolve_key_names(290) == ["BTN_THUMB2"]
+
+        # Fallback to bytype if both KEY and BTN return None
+        mock_key_map.get.return_value = None
+        mock_btn_map.get.return_value = None
+        mock_bytype_map.get.return_value = {290: "BTN_THUMB2"}
+        assert resolve_key_names(290) == ["BTN_THUMB2"]
+
+        # List/Tuple return
         mock_key_map.get.return_value = ["KEY_F9", "KEY_SELECT"]
         assert resolve_key_names(67) == ["KEY_F9", "KEY_SELECT"]
 
